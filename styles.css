@@ -75,3 +75,48 @@ textarea {
     background-color: white;
     border: 1px solid #d5d5d5;
 }
+.addPost button {
+    margin-top: 10px;
+    font-weight: bold;
+    background:none;
+    background-color: #01ffaf;
+    padding: 10px 20px;
+    border: solid 1px black;
+    border-radius: 5px;
+}
+.addPost{
+    max-width: 50%;
+}
+.delete{
+    background:none;
+    background-color: #ff4d4d;
+    padding: 10px 20px;
+    border: solid 1px black;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+.changeStat{
+    background:none;
+    background-color: #ffea2b;
+    padding: 10px 20px;
+    border: solid 1px black;
+    border-radius: 5px;
+}
+.postCard{
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    max-width: 45%;
+}
+
+.orderBtn{
+    background:none;
+    background-color: #1171c0;
+    padding: 10px 20px;
+    border: solid 1px black;
+    border-radius: 5px;
+    margin-right: 10px;
+    color: white;
+}

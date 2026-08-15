@@ -70,6 +70,7 @@ function App() {
             }
         });
         setSearch(sortedArrUserName);
+        setPosts(sortedArrCapp);
         return order;
     }
     let sortCapp = (asc_desc)=>{
@@ -92,6 +93,7 @@ function App() {
             }
         });
         setSearch(sortedArrCapp);
+        setPosts(sortedArrCapp);
         return order;
     }
     let performSearch = e=>{
@@ -133,7 +135,7 @@ function App() {
     }
     let deletePost = (i)=>{
         let array = [...allPosts];
-        console.log(i);
+        //console.log(i);
         if(i<0)
             return;
         array.splice(i,1);
@@ -149,6 +151,7 @@ function App() {
         <div className="app">
             <h1>PhotoShare Manager</h1>
             <SearchBar refInputSearch={inputSearch} search={performSearch}/>
+            <br/>
             <SortThePost sortUsers={sortUser} sortCapps={sortCapp}/>
             <AddNewPost valid={validateInput_AddPost} refUname={inputUsername} refCap={inputCaption}/>
             <br/>
@@ -190,8 +193,8 @@ function SortThePost(props){
 
     return(
         <>
-            <button onClick={sortU}>Username:{orderUser}</button>
-            <button onClick={sortC}>Caption:{orderCaption}</button>
+            <button onClick={sortU} className="orderBtn">Username:{orderUser}</button>
+            <button onClick={sortC} className="orderBtn">Caption:{orderCaption}</button>
         </>
     )
 }
@@ -223,12 +226,12 @@ function AddNewPost(props){
         props.valid(status);
     }
     return(
-        <form onSubmit={newPostAdded}>
+        <form onSubmit={newPostAdded} className="addPost">
             <h2>Add New Post</h2>
             <label name="newUser">Username: </label>
             <input type="text" placeholder="please enter your Username " ref={props.refUname}/>
             <label name="caption">Caption: </label>
-            <input type="text" placeholder="please enter a caption for the post " ref={props.refCap}/>
+            <textarea placeholder="please enter a caption for the post " ref={props.refCap}/>
             {/* <button onClick={ittChange}>{status}</button> */}
             <button onClick={newPostAdded}>Submit</button>
         </form>
@@ -273,12 +276,12 @@ function PostCard(props){
     let change= ()=>{statChange(itter)};
 
     return(
-        <>
+        <div className="postCard">
             <h2>{props.obj.username}</h2>
             <p>{props.obj.caption}</p>
-            <button onClick={change}>{status}</button>
-            <button onClick={()=>{props.deleteFun(props.indexKey)}}>Delete</button>
-        </>
+            <button onClick={change} className="changeStat">{status}</button>
+            <button onClick={()=>{props.deleteFun(props.indexKey)}} className="delete">Delete</button>
+        </div>
     );
 }
 

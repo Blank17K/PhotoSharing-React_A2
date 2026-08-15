@@ -50,18 +50,22 @@ function App() {
     let [search, setSearch] = useState(posts);
 
     let inputSearch = useRef(0);
+    let inputUsername = useRef(0);
+    let inputCaption = useRef(0);
     let sortUser = (asc_desc)=>{
         let order="";
         let sortedArrUserName = [...search].sort((obj1, obj2) => {
+            let objA = obj1.username.toLowerCase();
+            let objB = obj2.username.toLowerCase();
             if (asc_desc) {
                 order = "ASC";
-                if (obj1.username < obj2.username) return -1;
-                if (obj1.username > obj2.username) return 1;
+                if (objA < objB) return -1;
+                if (objA > objB) return 1;
                 return 0;
             } else {
                 order = "DESC";
-                if (obj2.username < obj1.username) return -1;
-                if (obj2.username > obj1.username) return 1;
+                if (objB < objA) return -1;
+                if (objB > objA) return 1;
                 return 0;
             }
         });
@@ -71,17 +75,19 @@ function App() {
     let sortCapp = (asc_desc)=>{
         let order = "";
         let sortedArrCapp = [...search].sort((obj1, obj2) => {
+            let objA = obj1.caption.toLowerCase();
+            let objB = obj2.caption.toLowerCase();
             if (asc_desc) {
                 order = 'ASC';
                 // Use comparison operators for strings
-                if (obj1.caption < obj2.caption) return -1;
-                if (obj1.caption > obj2.caption) return 1;
+                if (objA < objB) return -1;
+                if (objA > objB) return 1;
                 return 0;
             } else {
                 order = "DESC";
                 // Reverse comparison for descending
-                if (obj2.caption < obj1.caption) return -1;
-                if (obj2.caption > obj1.caption) return 1;
+                if (objB < objA) return -1;
+                if (objB > objA) return 1;
                 return 0;
             }
         });
@@ -101,14 +107,55 @@ function App() {
         });
         setSearch(newFilter);
     };
+    let validateInput_AddPost = (statusText)=>{
+        let userTxt = inputUsername.current.value.trim();
+        let capTxt = inputCaption.current.value.trim();
+        if(userTxt=="" || capTxt=="")
+            return;
+        let userName = "";
+        capTxt = inputCaption.current.value;
+        if(!inputUsername.current.value.includes("@"))
+            userName = "@"+inputUsername.current.value;
+        else 
+            userName = inputUsername.current.value;
+
+        let newArr = [...allPosts,{
+            id:allPosts.length+1,
+            username: userName,
+            caption: capTxt,
+            status: "Draft"
+        }];
+        setPosts(newArr);
+        setSearch(newArr);
+        inputSearch.current.value = "";
+        inputCaption.current.value = "";
+        inputUsername.current.value = "";
+    }
+    let deletePost = (i)=>{
+        let array = [...allPosts];
+        console.log(i);
+        if(i<0)
+            return;
+        array.splice(i,1);
+
+        setPosts(array);
+        setSearch(array);
+        inputSearch.current.value = "";
+        inputCaption.current.value = "";
+        inputUsername.current.value = "";
+
+    }
     return (
         <div className="app">
             <h1>PhotoShare Manager</h1>
             <SearchBar refInputSearch={inputSearch} search={performSearch}/>
             <SortThePost sortUsers={sortUser} sortCapps={sortCapp}/>
-            <AddNewPost />
+            <AddNewPost valid={validateInput_AddPost} refUname={inputUsername} refCap={inputCaption}/>
+            <br/>
             <hr/>
-            <PostList  posts={search}/>
+            <br/>
+            <h2>Posts:</h2>
+            <PostList  posts={search} deleteApost={deletePost}/>
         </div>
     );
 }
@@ -149,23 +196,54 @@ function SortThePost(props){
     )
 }
 function AddNewPost(props){
+    let [status, setStatus] = useState("Draft");
+    let [itt, setItt] = useState(0);
 
+    /*let ittChange = (e)=>{
+        e.preventDefault();
+        let i = itt;
+        i++;
+        let stat = "";
+        if(i==0)
+            stat = "Draft";
+        else if(i==1)
+            stat = "Archived";
+        else if(i==2)
+            stat = "Published";
+        else{
+            i=0;
+            stat = "Draft";
+        }
+
+        setItt(i);
+        setStatus(stat);
+    }*/
+    let newPostAdded = (e)=>{
+        e.preventDefault();
+        props.valid(status);
+    }
     return(
-        <form>
+        <form onSubmit={newPostAdded}>
             <h2>Add New Post</h2>
             <label name="newUser">Username: </label>
-            <input type="text" placeholder="please enter your Username "/>
+            <input type="text" placeholder="please enter your Username " ref={props.refUname}/>
+            <label name="caption">Caption: </label>
+            <input type="text" placeholder="please enter a caption for the post " ref={props.refCap}/>
+            {/* <button onClick={ittChange}>{status}</button> */}
+            <button onClick={newPostAdded}>Submit</button>
         </form>
     )
 }
 function PostList(props){
     let listPosts = null;
     if(props.posts && props.posts.length>0)
-        listPosts = props.posts.map((post)=>{
+        listPosts = props.posts.map((post, index)=>{
+            //console.log(index);
             return(
-                <PostCard obj={post} key={post.id} indexKey={post.id} />
+                <PostCard obj={post} key={post.id} indexKey={index} deleteFun={props.deleteApost}/>
             )
         });
+    //console.log("--------------------------------------------");
     let display = ()=>{
         if(listPosts)
             return listPosts;
@@ -199,7 +277,7 @@ function PostCard(props){
             <h2>{props.obj.username}</h2>
             <p>{props.obj.caption}</p>
             <button onClick={change}>{status}</button>
-            <button onClick={()=>{console.log(props.indexKey)}}>Delete</button>
+            <button onClick={()=>{props.deleteFun(props.indexKey)}}>Delete</button>
         </>
     );
 }
